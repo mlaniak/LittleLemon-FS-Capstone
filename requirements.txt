@@ -1,0 +1,16 @@
+# Core requirements
+Django>=5.1.6,<6.0.0
+djangorestframework>=3.14.0,<4.0.0
+django-cors-headers>=4.3.1,<5.0.0
+python-dotenv>=1.0.1,<2.0.0
+
+# Database requirements
+# For MySQL on macOS/Linux:
+mysqlclient>=2.2.4,<3.0.0
+# For MySQL on Windows (uncomment if needed):
+# mysqlclient>=2.2.4,<3.0.0  # Requires Microsoft Visual C++ 14.0 or greater
+# OR use this alternative for Windows:
+# mysql-connector-python>=8.3.0,<9.0.0  # Pure Python implementation, easier to install
+
+# Development requirements
+django-debug-toolbar>=4.3.0,<5.0.0  # Optional, for debugging
