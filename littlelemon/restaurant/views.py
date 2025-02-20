@@ -1,57 +1,34 @@
-from django.shortcuts import render
-from rest_framework import viewsets, status
+from django.contrib.auth.models import User
+from rest_framework import generics, viewsets
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from .models import Menu, Booking
-from .serializers import MenuSerializer, BookingSerializer
+from .serializers import MenuItemSerializer, UserSerializer, BookingSerializer
 
-class MenuViewSet(viewsets.ModelViewSet):
+@api_view(['GET'])
+def api_root(request):
+    return Response({
+        'users': reverse('user-list', request=request),
+        'menu': reverse('menu-list', request=request)
+    })
+
+class UserList(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class MenuItemsView(generics.ListCreateAPIView):
     queryset = Menu.objects.all()
-    serializer_class = MenuSerializer
+    serializer_class = MenuItemSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            self.perform_create(serializer)
-            return Response({
-                'status': 'success',
-                'data': serializer.data
-            }, status=status.HTTP_201_CREATED)
-        return Response({
-            'status': 'error',
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({
-            'status': 'success',
-            'data': serializer.data
-        })
+class SingleMenuItemView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+    queryset = Menu.objects.all()
+    serializer_class = MenuItemSerializer
 
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            self.perform_create(serializer)
-            return Response({
-                'status': 'success',
-                'data': serializer.data
-            }, status=status.HTTP_201_CREATED)
-        return Response({
-            'status': 'error',
-            'errors': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({
-            'status': 'success',
-            'data': serializer.data
-        })
-def index(request):
-    return render(request, 'index.html', {})
