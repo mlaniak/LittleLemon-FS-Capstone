@@ -99,12 +99,32 @@ The server will start at http://localhost:8000/
 - PUT /api/menu/{id}/ - Update menu item
 - DELETE /api/menu/{id}/ - Delete menu item
 
-### Table Booking API
-- GET /api/bookings/ - List all bookings
-- POST /api/bookings/ - Create new booking
-- GET /api/bookings/{id}/ - Get specific booking
-- PUT /api/bookings/{id}/ - Update booking
-- DELETE /api/bookings/{id}/ - Delete booking
+### Booking API
+- GET /api/booking/ - List all bookings
+- POST /api/booking/ - Create new booking
+- GET /api/booking/{id}/ - Get specific booking
+- PUT /api/booking/{id}/ - Update booking
+- DELETE /api/booking/{id}/ - Delete booking
+
+### API Response Format
+
+All API endpoints return responses in a consistent format:
+
+Success Response:
+```json
+{
+    "status": "success",
+    "data": { ... }
+}
+```
+
+Error Response:
+```json
+{
+    "status": "error",
+    "errors": { ... }
+}
+```
 
 ## Project Structure
 
@@ -128,19 +148,17 @@ littlelemon/
 
 ## Database Models
 
-### Menu Item
-- name: CharField
-- price: DecimalField
-- description: TextField
-- category: CharField
+### Menu
+- id: AutoField (primary key)
+- title: CharField(max_length=255)
+- price: DecimalField(max_digits=10, decimal_places=2)
+- inventory: IntegerField
 
-### Table Booking
-- date: DateField
-- time: TimeField
-- party_size: IntegerField
-- name: CharField
-- email: EmailField
-- phone: CharField
+### Booking
+- id: AutoField (primary key)
+- name: CharField(max_length=255)
+- no_of_guests: IntegerField
+- bookingdate: DateTimeField
 
 ## Contributing
 
