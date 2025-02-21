@@ -39,7 +39,49 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'restaurant',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',  # Add Djoser for user management
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Allow unauthenticated access in development
+    ],
+}
+
+# Authentication Backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.AllowAllUsersModelBackend',
+]
+
+# Djoser Configuration
+DJOSER = {
+    'USER_ID_FIELD': 'username',
+    'LOGIN_FIELD': 'username',  # Use username for login
+    'USER_CREATE_PASSWORD_RETYPE': True,  # Require password confirmation
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': False,  # Don't send email on password change in development
+    'SEND_CONFIRMATION_EMAIL': False,  # Don't send email on registration in development
+    'SET_PASSWORD_RETYPE': True,  # Require password confirmation on password set
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',  # Password reset URL
+    'ACTIVATION_URL': 'activate/{uid}/{token}',  # Account activation URL
+    'SEND_ACTIVATION_EMAIL': False,  # Don't send activation email in development
+    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',  # Use DRF's token model
+    'SERIALIZERS': {
+        'user_create': 'djoser.serializers.UserCreateSerializer',
+        'user': 'djoser.serializers.UserSerializer',
+        'current_user': 'djoser.serializers.UserSerializer',
+        'token': 'djoser.serializers.TokenSerializer',
+    },
+    'PERMISSIONS': {
+        'user': ['rest_framework.permissions.AllowAny'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'token_create': ['rest_framework.permissions.AllowAny'],
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,3 +175,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email configuration for development
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

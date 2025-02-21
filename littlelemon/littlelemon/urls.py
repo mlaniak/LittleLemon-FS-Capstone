@@ -19,13 +19,22 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken.views import obtain_auth_token
 from restaurant import views
 
 router = DefaultRouter()
 router.register(r'tables', views.BookingViewSet)
 
 urlpatterns = [
+    # Admin interface
     path('admin/', admin.site.urls),
+    
+    # API endpoints
     path('api/', include('restaurant.urls')),
     path('restaurant/booking/', include(router.urls)),
+    
+    # Authentication endpoints
+    path('api-token-auth/', obtain_auth_token),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

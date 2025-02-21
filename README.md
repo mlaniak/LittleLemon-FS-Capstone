@@ -6,12 +6,18 @@ This project implements REST APIs for the Little Lemon restaurant using Django a
 
 - Menu API: Allows customers to browse and order food items
 - Table Booking API: Enables customers to reserve tables for specific dates and party sizes
+- User Authentication: Secure token-based authentication using Djoser and Django REST Framework
+  - User registration with email
+  - Token-based authentication
+  - User profile management
 
 ## Technical Stack
 
 - Python 3.x
 - Django 5.1.6
 - Django REST Framework 3.14.0
+- Djoser 2.3.1
+- Django REST Framework SimpleJWT 5.4.0
 - MySQL Database
 
 ## Project Setup
