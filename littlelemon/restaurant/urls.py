@@ -18,8 +18,8 @@ urlpatterns = [
     path('api/users/<int:pk>/', views.UserDetail.as_view(), name='user-detail'),
     path('api/menu/', views.MenuItemsView.as_view(), name='menu-list'),
     path('api/menu/<int:pk>/', views.SingleMenuItemView.as_view(), name='menu-detail'),
-    path('api/menu-items/', views.MenuItemsView.as_view(), name='menu-items-list'),
-    path('api/menu-items/<int:pk>/', views.SingleMenuItemView.as_view(), name='menu-item-detail'),
+    path('api/categories/', views.CategoryView.as_view(), name='category-list'),
+    path('api/categories/<int:pk>/', views.SingleCategoryView.as_view(), name='category-detail'),
     path('api/bookings/', views.BookingViewSet.as_view({'get': 'list', 'post': 'create'}), name='booking-list'),
     path('api/bookings/<int:pk>/', views.BookingViewSet.as_view({
         'get': 'retrieve',

@@ -12,14 +12,16 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from .models import Menu, Booking, Category
-from .serializers import MenuItemSerializer, UserSerializer, BookingSerializer
+from .serializers import MenuItemSerializer, UserSerializer, BookingSerializer, CategorySerializer
 import json
 
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
         'users': reverse('user-list', request=request, format=format),
-        'menu-items': reverse('menu-items', request=request, format=format),
+        'menu': reverse('menu-list', request=request, format=format),
+        'categories': reverse('category-list', request=request, format=format),
+        'bookings': reverse('booking-list', request=request, format=format),
     })
 
 def home(request):
@@ -215,6 +217,16 @@ class MenuItemsView(generics.ListCreateAPIView):
 class SingleMenuItemView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuItemSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class CategoryView(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class SingleCategoryView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class BookingViewSet(viewsets.ModelViewSet):

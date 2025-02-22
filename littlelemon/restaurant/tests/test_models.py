@@ -1,54 +1,75 @@
 from django.test import TestCase
-from restaurant.models import Menu, MenuItem, Booking
+from restaurant.models import Menu, Category, Booking
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from decimal import Decimal
+from datetime import date
+
+class CategoryTest(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(
+            name="Main Course",
+            order=1
+        )
+    
+    def test_category_creation(self):
+        self.assertEqual(self.category.name, "Main Course")
+        self.assertEqual(self.category.order, 1)
+    
+    def test_category_str(self):
+        self.assertEqual(str(self.category), "Main Course")
 
 class MenuTest(TestCase):
     def setUp(self):
+        self.category = Category.objects.create(
+            name="Desserts",
+            order=2
+        )
         self.menu_item = Menu.objects.create(
-            title="Pizza",
-            price=Decimal('12.99'),
-            inventory=50
+            title="Tiramisu",
+            price=Decimal('8.99'),
+            inventory=20,
+            description="Classic Italian dessert",
+            category=self.category
         )
     
     def test_menu_item_creation(self):
-        self.assertEqual(self.menu_item.title, "Pizza")
-        self.assertEqual(self.menu_item.price, Decimal('12.99'))
-        self.assertEqual(self.menu_item.inventory, 50)
+        self.assertEqual(self.menu_item.title, "Tiramisu")
+        self.assertEqual(self.menu_item.price, Decimal('8.99'))
+        self.assertEqual(self.menu_item.inventory, 20)
+        self.assertEqual(self.menu_item.description, "Classic Italian dessert")
+        self.assertEqual(self.menu_item.category, self.category)
     
     def test_menu_string_representation(self):
-        self.assertEqual(str(self.menu_item), "Pizza - $12.99")
-
-class MenuItemTest(TestCase):
-    def setUp(self):
-        self.menu_item = MenuItem.objects.create(
-            title="IceCream",
-            price=Decimal('80.00'),
-            inventory=100
-        )
-    
-    def test_get_item(self):
-        self.assertEqual(self.menu_item.get_item(), "IceCream : 80.00")
-    
-    def test_menu_item_fields(self):
-        self.assertEqual(self.menu_item.title, "IceCream")
-        self.assertEqual(self.menu_item.price, Decimal('80.00'))
-        self.assertEqual(self.menu_item.inventory, 100)
+        self.assertEqual(str(self.menu_item), "Tiramisu : 8.99")
 
 class BookingTest(TestCase):
     def setUp(self):
-        self.booking_time = timezone.now()
         self.booking = Booking.objects.create(
-            name="John Doe",
-            no_of_guests=4,
-            bookingdate=self.booking_time
+            first_name="John",
+            reservation_date=date(2024, 3, 15),
+            reservation_slot="18:00"
         )
     
     def test_booking_creation(self):
-        self.assertEqual(self.booking.name, "John Doe")
-        self.assertEqual(self.booking.no_of_guests, 4)
-        self.assertEqual(self.booking.bookingdate, self.booking_time)
+        self.assertEqual(self.booking.first_name, "John")
+        self.assertEqual(self.booking.reservation_date, date(2024, 3, 15))
+        self.assertEqual(self.booking.reservation_slot, "18:00")
     
-    def test_booking_string_representation(self):
-        expected_str = f"John Doe - {self.booking_time}"
-        self.assertEqual(str(self.booking), expected_str)
+    def test_empty_name_validation(self):
+        with self.assertRaises(ValidationError):
+            booking = Booking(
+                first_name="",
+                reservation_date=date(2024, 3, 15),
+                reservation_slot="18:00"
+            )
+            booking.full_clean()
+    
+    def test_unique_reservation_slot(self):
+        with self.assertRaises(ValidationError):
+            # Try to create a booking for the same date and slot
+            Booking.objects.create(
+                first_name="Jane",
+                reservation_date=date(2024, 3, 15),
+                reservation_slot="18:00"
+            )
