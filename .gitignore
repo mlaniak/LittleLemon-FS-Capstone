@@ -49,4 +49,10 @@ media/
 # Windows
 Thumbs.db
 ehthumbs.db
-Desktop.ini
+
+# Project specific
+insomnia_collection.json
+capstone_final.md
+INSOMNIA.md
+*.bak
+*.tmp

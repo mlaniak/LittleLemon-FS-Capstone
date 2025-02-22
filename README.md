@@ -4,12 +4,10 @@ This project implements REST APIs for the Little Lemon restaurant using Django a
 
 ## Features
 
-- Menu API: Allows customers to browse and order food items
-- Table Booking API: Enables customers to reserve tables for specific dates and party sizes
-- User Authentication: Secure token-based authentication using Djoser and Django REST Framework
-  - User registration with email
-  - Token-based authentication
-  - User profile management
+- Menu Management: Browse, create, and manage menu items and categories
+- Table Booking System: Reserve tables for specific dates and time slots
+- User Authentication: Secure token-based authentication using Djoser
+- Admin Interface: Django admin panel for easy content management
 
 ## Technical Stack
 
@@ -17,172 +15,79 @@ This project implements REST APIs for the Little Lemon restaurant using Django a
 - Django 5.1.6
 - Django REST Framework 3.14.0
 - Djoser 2.3.1
-- Django REST Framework SimpleJWT 5.4.0
 - MySQL Database
+
+## Setup Instructions
+
+1. Clone the repository
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Configure MySQL database in settings.py
+5. Run migrations:
+   ```bash
+   python manage.py migrate
+   ```
+6. Create a superuser:
+   ```bash
+   python manage.py createsuperuser
+   ```
+7. Run the development server:
+   ```bash
+   python manage.py runserver
+   ```
 
 ## API Endpoints
 
 ### Authentication
-- POST `/api/api-token-auth/`
-  - Get authentication token
-  - Required fields: username, password
-  - Returns: token
+- POST `/auth/users/` - User registration
+- POST `/auth/token/login/` - Get authentication token
+- POST `/auth/token/logout/` - Logout (invalidate token)
 
-### Menu Operations
-- GET `/api/menu/`
-  - List all menu items
-  - No authentication required
-- GET `/api/menu/{id}/`
-  - Get specific menu item
-  - No authentication required
-- POST `/api/menu/`
-  - Create new menu item
-  - Requires authentication
-  - Fields: title, price, inventory
+### Menu Management
+- GET, POST `/api/menu/` - List or create menu items
+- GET, PUT, DELETE `/api/menu/{id}/` - Retrieve, update or delete menu item
+- GET, POST `/api/categories/` - List or create categories
+- GET, PUT, DELETE `/api/categories/{id}/` - Retrieve, update or delete category
 
-### Table Booking Operations
-- GET `/api/bookings/`
-  - List all bookings
-  - Requires authentication
-- POST `/api/bookings/`
-  - Create new booking
-  - Requires authentication
-  - Fields: name, no_of_guests, bookingdate
-- GET `/api/bookings/{id}/`
-  - Get specific booking
-  - Requires authentication
-- PUT `/api/bookings/{id}/`
-  - Update booking
-  - Requires authentication
-  - Fields: name, no_of_guests, bookingdate
-- DELETE `/api/bookings/{id}/`
-  - Delete booking
-  - Requires authentication
+### Booking System
+- GET, POST `/api/bookings/` - List or create bookings
+- GET, PUT, DELETE `/api/bookings/{id}/` - Retrieve, update or delete booking
 
-### Menu API
-- GET /api/menu/ - List all menu items
-- POST /api/menu/ - Add new menu item
-- GET /api/menu/{id}/ - Get specific menu item
-- PUT /api/menu/{id}/ - Update menu item
-- DELETE /api/menu/{id}/ - Delete menu item
+## Authentication
 
-### Booking API
-- GET /api/booking/ - List all bookings
-- POST /api/booking/ - Create new booking
-- GET /api/booking/{id}/ - Get specific booking
-- PUT /api/booking/{id}/ - Update booking
-- DELETE /api/booking/{id}/ - Delete booking
-
-### API Response Format
-
-All API endpoints return responses in a consistent format:
-
-Success Response:
-```json
-{
-    "status": "success",
-    "data": { ... }
-}
+Most endpoints require authentication. Include the token in the Authorization header:
+```
+Authorization: Token <your-token>
 ```
 
-Error Response:
-```json
-{
-    "status": "error",
-    "errors": { ... }
-}
-```
+## Models
 
-## Project Setup
+### Menu
+- title (string)
+- price (decimal)
+- inventory (integer)
+- description (text)
+- category (foreign key)
 
-### Prerequisites
+### Category
+- name (string)
+- order (integer)
 
-1. Python 3.x installed on your system
-   - Download from [python.org](https://www.python.org/downloads/)
-   - Make sure to check "Add Python to PATH" during Windows installation
+### Booking
+- first_name (string)
+- reservation_date (date)
+- reservation_slot (string)
 
-2. MySQL installed on your system
-   - [MySQL Community Downloads](https://dev.mysql.com/downloads/)
-   - For Windows: MySQL Installer
-   - For macOS: Use Homebrew: `brew install mysql`
+## Testing
 
-### Installation Steps
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd LittleLemon-FS-Capstone
-```
-
-2. Create and activate virtual environment:
-
-For Windows:
-```bash
-python -m venv myenv
-myenv\Scripts\activate
-```
-
-For macOS/Linux:
-```bash
-python3 -m venv myenv
-source myenv/bin/activate
-```
-
-3. Install dependencies:
-```bash
-# Upgrade pip first (recommended)
-python -m pip install --upgrade pip
-
-# Install project dependencies
-pip install -r requirements.txt
-```
-
-### Database Setup
-
-For Windows:
-```bash
-# If using MySQL, make sure MySQL is running in Services
-# Create database
-mysql -u root -p
-CREATE DATABASE littlelemon;
-```
-
-For macOS:
-```bash
-# Start MySQL if not running
-brew services start mysql
-# Create database
-mysql -u root -p
-CREATE DATABASE littlelemon;
-```
-
-3. Apply database migrations:
-```bash
-cd littlelemon
-python manage.py migrate
-```
-
-4. Run development server:
-```bash
-python manage.py runserver
-```
-
-The server will start at http://localhost:8000/
-
-## Authentication Instructions
-1. Obtain token by sending POST request to `/api/api-token-auth/` with username and password
-2. Include token in request header for authenticated endpoints:
-   ```
-   Authorization: Token <your-token-here>
-   ```
-
-## Testing with Insomnia
-1. Import the API collection
-2. Get authentication token using the `/api/api-token-auth/` endpoint
-3. Set token in request headers for authenticated endpoints
-4. Test all endpoints following the API documentation above
-
-## Running Tests
+The project includes comprehensive unit tests for all models and API endpoints. Run tests with:
 ```bash
 python manage.py test
 ```
@@ -206,20 +111,6 @@ littlelemon/
     ├── urls.py
     └── views.py
 ```
-
-## Database Models
-
-### Menu
-- id: AutoField (primary key)
-- title: CharField(max_length=255)
-- price: DecimalField(max_digits=10, decimal_places=2)
-- inventory: IntegerField
-
-### Booking
-- id: AutoField (primary key)
-- name: CharField(max_length=255)
-- no_of_guests: IntegerField
-- bookingdate: DateTimeField
 
 ## Contributing
 
