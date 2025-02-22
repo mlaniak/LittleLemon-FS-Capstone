@@ -23,7 +23,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from restaurant import views
 
 router = DefaultRouter()
-router.register(r'tables', views.BookingViewSet)
+router.register(r'bookings', views.BookingViewSet)
 
 urlpatterns = [
     # Admin interface
@@ -31,7 +31,7 @@ urlpatterns = [
     
     # API endpoints
     path('api/', include('restaurant.urls')),
-    path('restaurant/booking/', include(router.urls)),
+    path('api/', include(router.urls)),
     
     # Authentication endpoints
     path('api-token-auth/', obtain_auth_token),
