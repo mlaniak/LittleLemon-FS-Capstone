@@ -20,6 +20,79 @@ This project implements REST APIs for the Little Lemon restaurant using Django a
 - Django REST Framework SimpleJWT 5.4.0
 - MySQL Database
 
+## API Endpoints
+
+### Authentication
+- POST `/api/api-token-auth/`
+  - Get authentication token
+  - Required fields: username, password
+  - Returns: token
+
+### Menu Operations
+- GET `/api/menu/`
+  - List all menu items
+  - No authentication required
+- GET `/api/menu/{id}/`
+  - Get specific menu item
+  - No authentication required
+- POST `/api/menu/`
+  - Create new menu item
+  - Requires authentication
+  - Fields: title, price, inventory
+
+### Table Booking Operations
+- GET `/api/bookings/`
+  - List all bookings
+  - Requires authentication
+- POST `/api/bookings/`
+  - Create new booking
+  - Requires authentication
+  - Fields: name, no_of_guests, bookingdate
+- GET `/api/bookings/{id}/`
+  - Get specific booking
+  - Requires authentication
+- PUT `/api/bookings/{id}/`
+  - Update booking
+  - Requires authentication
+  - Fields: name, no_of_guests, bookingdate
+- DELETE `/api/bookings/{id}/`
+  - Delete booking
+  - Requires authentication
+
+### Menu API
+- GET /api/menu/ - List all menu items
+- POST /api/menu/ - Add new menu item
+- GET /api/menu/{id}/ - Get specific menu item
+- PUT /api/menu/{id}/ - Update menu item
+- DELETE /api/menu/{id}/ - Delete menu item
+
+### Booking API
+- GET /api/booking/ - List all bookings
+- POST /api/booking/ - Create new booking
+- GET /api/booking/{id}/ - Get specific booking
+- PUT /api/booking/{id}/ - Update booking
+- DELETE /api/booking/{id}/ - Delete booking
+
+### API Response Format
+
+All API endpoints return responses in a consistent format:
+
+Success Response:
+```json
+{
+    "status": "success",
+    "data": { ... }
+}
+```
+
+Error Response:
+```json
+{
+    "status": "error",
+    "errors": { ... }
+}
+```
+
 ## Project Setup
 
 ### Prerequisites
@@ -96,40 +169,22 @@ python manage.py runserver
 
 The server will start at http://localhost:8000/
 
-## API Endpoints
+## Authentication Instructions
+1. Obtain token by sending POST request to `/api/api-token-auth/` with username and password
+2. Include token in request header for authenticated endpoints:
+   ```
+   Authorization: Token <your-token-here>
+   ```
 
-### Menu API
-- GET /api/menu/ - List all menu items
-- POST /api/menu/ - Add new menu item
-- GET /api/menu/{id}/ - Get specific menu item
-- PUT /api/menu/{id}/ - Update menu item
-- DELETE /api/menu/{id}/ - Delete menu item
+## Testing with Insomnia
+1. Import the API collection
+2. Get authentication token using the `/api/api-token-auth/` endpoint
+3. Set token in request headers for authenticated endpoints
+4. Test all endpoints following the API documentation above
 
-### Booking API
-- GET /api/booking/ - List all bookings
-- POST /api/booking/ - Create new booking
-- GET /api/booking/{id}/ - Get specific booking
-- PUT /api/booking/{id}/ - Update booking
-- DELETE /api/booking/{id}/ - Delete booking
-
-### API Response Format
-
-All API endpoints return responses in a consistent format:
-
-Success Response:
-```json
-{
-    "status": "success",
-    "data": { ... }
-}
-```
-
-Error Response:
-```json
-{
-    "status": "error",
-    "errors": { ... }
-}
+## Running Tests
+```bash
+python manage.py test
 ```
 
 ## Project Structure

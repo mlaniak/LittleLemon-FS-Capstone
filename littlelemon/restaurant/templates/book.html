@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="reservation-section">
+  <div class="reservation-content">
+    <h1>Make a Reservation</h1>
+
+    <div class="reservation-layout">
+      <div class="reservation-form">
+        <form id="bookingForm" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="first_name">Name:</label>
+            <input type="text" id="first_name" name="first_name" placeholder="Your Name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="reservation_date">Reservation Date:</label>
+            <input type="date" id="reservation_date" name="reservation_date" required>
+          </div>
+
+          <div class="form-group">
+            <label for="reservation_slot">Reservation Time:</label>
+            <select id="reservation_slot" name="reservation_slot" required>
+              <option value="">Select time</option>
+            </select>
+            <p class="time-slots-info" id="timeSlotInfo">Loading available time slots...</p>
+          </div>
+
+          <button type="submit" class="reserve-button" id="button">Reserve Table</button>
+        </form>
+      </div>
+
+      <div class="bookings-display">
+        <h2>Current Bookings</h2>
+        <p class="date-display">for <span id="today"></span></p>
+        <div id="bookings" class="bookings-list">
+          <p class="loading-message">Loading bookings...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.reservation-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.reservation-content h1 {
+  color: #333;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+.reservation-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.reservation-form {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #495E57;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #495E57;
+}
+
+.time-slots-info {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.time-slots-info.error {
+  color: #dc3545;
+}
+
+.reserve-button {
+  background-color: #495E57;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.reserve-button:hover {
+  background-color: #374641;
+}
+
+.reserve-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.bookings-display {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.bookings-display h2 {
+  color: #495E57;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.date-display {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.bookings-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.booking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  transition: transform 0.2s;
+}
+
+.booking-item:hover {
+  transform: translateY(-2px);
+}
+
+.booking-name {
+  color: #333;
+  font-weight: 500;
+}
+
+.booking-time {
+  color: #495E57;
+  font-size: 0.9rem;
+  background: #e9ecef;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+}
+
+.loading-message,
+.no-bookings {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .reservation-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .reservation-section {
+    padding: 1rem;
+  }
+  
+  .reservation-form,
+  .bookings-display {
+    padding: 1.5rem;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('bookingForm');
+    const dateInput = document.getElementById('reservation_date');
+    const timeSelect = document.getElementById('reservation_slot');
+    const timeSlotInfo = document.getElementById('timeSlotInfo');
+    const button = document.getElementById('button');
+    const today = document.getElementById('today');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Set min date to today
+    const currentDate = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', currentDate);
+    dateInput.value = currentDate;
+
+    // Update bookings display date
+    function updateDisplayDate(dateStr) {
+        const displayDate = new Date(dateStr);
+        today.textContent = displayDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    // Function to format time
+    function formatTime(timeStr) {
+        const [hours, minutes] = timeStr.split(':');
+        let hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12;
+        hour = hour ? hour : 12; // Convert 0 to 12
+        return `${hour}:${minutes} ${ampm}`;
+    }
+
+    // Function to update available time slots
+    function updateTimeSlots() {
+        timeSlotInfo.textContent = 'Loading available time slots...';
+        timeSlotInfo.className = 'time-slots-info';
+        timeSelect.innerHTML = '<option value="">Select time</option>';
+        button.disabled = true;
+
+        const date = dateInput.value;
+        updateDisplayDate(date);
+        
+        fetch(`/bookings/?date=${date}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch time slots');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                const availableSlots = data.available_slots || [];
+                if (availableSlots.length === 0) {
+                    timeSlotInfo.textContent = 'No time slots available for this date';
+                    return;
+                }
+
+                availableSlots.sort().forEach(slot => {
+                    const option = document.createElement('option');
+                    option.value = slot;
+                    option.textContent = formatTime(slot);
+                    timeSelect.appendChild(option);
+                });
+
+                timeSlotInfo.textContent = `${availableSlots.length} time slots available`;
+                button.disabled = false;
+
+                // Update bookings list
+                updateBookingsList(data.bookings);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                timeSlotInfo.textContent = error.message || 'Error loading time slots';
+                timeSlotInfo.className = 'time-slots-info error';
+            });
+    }
+
+    // Function to update bookings list
+    function updateBookingsList(bookings) {
+        const bookingsList = document.getElementById('bookings');
+        bookingsList.innerHTML = '';
+
+        if (!bookings || bookings.length === 0) {
+            bookingsList.innerHTML = '<p class="no-bookings">No bookings for this date</p>';
+            return;
+        }
+
+        bookings.sort((a, b) => a.reservation_slot.localeCompare(b.reservation_slot));
+
+        bookings.forEach(booking => {
+            const bookingItem = document.createElement('div');
+            bookingItem.className = 'booking-item';
+            bookingItem.innerHTML = `
+                <span class="booking-name">${booking.first_name}</span>
+                <span class="booking-time">${formatTime(booking.reservation_slot)}</span>
+            `;
+            bookingsList.appendChild(bookingItem);
+        });
+    }
+
+    // Event listeners
+    dateInput.addEventListener('change', updateTimeSlots);
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            first_name: document.getElementById('first_name').value.trim(),
+            reservation_date: dateInput.value,
+            reservation_slot: timeSelect.value
+        };
+
+        if (!formData.first_name || !formData.reservation_date || !formData.reservation_slot) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = 'Reserving...';
+
+        fetch('/bookings/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Booking confirmed!');
+                document.getElementById('first_name').value = '';
+                timeSelect.value = '';
+                updateTimeSlots();
+            } else {
+                throw new Error(data.error || 'Booking failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'Error making booking. Please try again.');
+        })
+        .finally(() => {
+            button.disabled = false;
+            button.textContent = 'Reserve Table';
+        });
+    });
+
+    // Initial load
+    updateTimeSlots();
+});
+</script>
+{% endblock %}

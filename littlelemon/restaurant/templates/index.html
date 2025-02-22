@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome to Little Lemon{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section id="hero">
+    <h1>Welcome To Little Lemon Restaurant</h1>
+    <p>Experience Mediterranean cuisine at its finest</p>
+    <h2>{{ special_offer.title }}</h2>
+    <p>{{ special_offer.description }}</p>
+    <a href="{% url 'book' %}" class="cta">Book Your Table</a>
+</section>
+
+<!-- Features Section -->
+<section class="grid">
+    <article class="card">
+        <img src="{% static 'img/Bruschetta.jpg' %}" alt="Delicious Bruschetta">
+        <div class="card-content">
+            <h2>Our New Menu</h2>
+            <p>
+                Discover our carefully curated menu featuring 12-15 seasonal items based on Italian, Greek, and Turkish cuisine.
+                Each dish is crafted using traditional recipes with a modern twist.
+            </p>
+            <a href="{% url 'menu' %}" class="button">View Menu</a>
+        </div>
+    </article>
+    
+    <article class="card">
+        <img src="{% static 'img/restaurant_inside.jpg' %}" alt="Restaurant Interior">
+        <div class="card-content">
+            <h2>Book a Table</h2>
+            <p>
+                Reserve your table for an authentic Mediterranean dining experience.
+                Perfect for special occasions or a memorable night out with family and friends.
+            </p>
+            <a href="{% url 'book' %}" class="button">Make Reservation</a>
+        </div>
+    </article>
+    
+    <article class="card">
+        <img src="{% static 'img/mario-and-adrian.jpg' %}" alt="Our Chefs">
+        <div class="card-content">
+            <h2>Opening Hours</h2>
+            <p>Join us for lunch or dinner any day of the week!</p>
+            <ul>
+                <li>Monday - Friday: {{ opening_hours.weekdays }}</li>
+                <li>Saturday: {{ opening_hours.saturday }}</li>
+                <li>Sunday: {{ opening_hours.sunday }}</li>
+            </ul>
+        </div>
+    </article>
+</section>
+
+<!-- About Section -->
+<section class="grid">
+    <article class="card">
+        <img src="{% static 'img/restaurant chef C.jpg' %}" alt="Chef preparing food">
+        <div class="card-content">
+            <h2>Our Story</h2>
+            <p>
+                Little Lemon is a family-owned Mediterranean restaurant focused on traditional recipes 
+                served with a modern twist. We take pride in offering fresh, locally-sourced ingredients 
+                and authentic flavors.
+            </p>
+            <a href="{% url 'about' %}" class="button">Learn More</a>
+        </div>
+    </article>
+    
+    <article class="card">
+        <img src="{% static 'img/greek salad.jpg' %}" alt="Fresh Greek Salad">
+        <div class="card-content">
+            <h2>Fresh Ingredients</h2>
+            <p>
+                We source the freshest ingredients from local suppliers to ensure the highest quality 
+                in every dish we serve. Our menu changes seasonally to bring you the best flavors.
+            </p>
+            <a href="{% url 'menu' %}" class="button">View Menu</a>
+        </div>
+    </article>
+</section>
+{% endblock %}

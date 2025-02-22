@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="menu-section">
+  <div class="menu-header">
+    <h1>Our Menu</h1>
+    <p class="menu-description">Experience the flavors of the Mediterranean</p>
+  </div>
+
+  {% if categories %}
+    <div class="menu-container">
+      {% for category in categories %}
+        <div class="category-section">
+          <h2 class="category-title">{{ category.name }}</h2>
+          <div class="menu-items">
+            {% for item in category.menu_items.all %}
+              <div class="menu-item">
+                <div class="menu-item-header">
+                  <h3 class="menu-item-title">{{ item.title }}</h3>
+                  <p class="menu-item-price">${{ item.price }}</p>
+                </div>
+                <p class="menu-item-description">{{ item.description }}</p>
+                <span class="menu-item-inventory {% if item.inventory > 0 %}in-stock{% else %}sold-out{% endif %}">
+                  {% if item.inventory > 0 %}Available{% else %}Sold Out{% endif %}
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="no-items">Our menu is being updated. Please check back soon!</p>
+  {% endif %}
+</section>
+
+<style>
+.menu-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  background: #fff;
+}
+
+.menu-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.menu-header h1 {
+  color: #333;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.menu-description {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.menu-container {
+  display: grid;
+  gap: 3rem;
+}
+
+.category-section {
+  background: #fff;
+}
+
+.category-title {
+  color: #495E57;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #eee;
+  letter-spacing: 0.5px;
+}
+
+.menu-items {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.menu-item {
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.menu-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.menu-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.menu-item-title {
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.menu-item-price {
+  color: #495E57;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.menu-item-description {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin: 0.5rem 0;
+}
+
+.menu-item-inventory {
+  display: inline-block;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  margin-top: 0.5rem;
+}
+
+.menu-item-inventory.in-stock {
+  background-color: #e6f3e6;
+  color: #2d5a27;
+}
+
+.menu-item-inventory.sold-out {
+  background-color: #fee;
+  color: #c53030;
+}
+
+.no-items {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 2rem;
+}
+
+@media (min-width: 768px) {
+  .menu-items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .menu-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .menu-header h1 {
+    font-size: 2rem;
+  }
+
+  .category-title {
+    font-size: 1.3rem;
+  }
+
+  .menu-item-title {
+    font-size: 1.1rem;
+  }
+}
+</style>
+{% endblock %}

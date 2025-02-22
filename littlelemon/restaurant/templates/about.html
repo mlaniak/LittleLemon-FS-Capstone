@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="about-section">
+  <div class="about-content">
+    <h1>About Us</h1>
+    
+    <div class="about-text">
+      <p class="lead">Based in Chicago, Illinois, Little Lemon is a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.</p>
+      
+      <div class="story-section">
+        <h2>Our Story</h2>
+        <p>Little Lemon is owned by two Italian brothers, Mario and Adrian, who moved to the United States to pursue their shared dream of owning a restaurant.</p>
+        <p>To craft the menu, Mario relies on family recipes and his experience as a chef in Italy.</p>
+        <p>Adrian does all the marketing for the restaurant and led the effort to expand the menu beyond classic Italian to incorporate additional cuisines from the Mediterranean region.</p>
+      </div>
+
+      <div class="cuisine-section">
+        <h2>Our Cuisine</h2>
+        <p>The chefs draw inspiration from Italian, Greek, and Turkish culture and have a menu of 12-15 items that they rotate seasonally.</p>
+        <p>The restaurant has a rustic and relaxed atmosphere with moderate prices, making it a popular place for a meal any time of the day.</p>
+      </div>
+    </div>
+
+    <div class="about-image">
+      <img src="{% static 'img/mario-and-adrian.jpg' %}" alt="Mario and Adrian, owners of Little Lemon" class="feature-image">
+    </div>
+  </div>
+</section>
+
+<style>
+.about-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.about-content {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.about-content h1 {
+  color: #333;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  grid-column: 1 / -1;
+}
+
+.about-text {
+  display: grid;
+  gap: 1rem;
+}
+
+.lead {
+  font-size: 1.1rem;
+  color: #495E57;
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+}
+
+.story-section,
+.cuisine-section {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+h2 {
+  color: #495E57;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+p {
+  color: #666;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+.about-image {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.feature-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  max-height: 300px;
+}
+
+@media (min-width: 768px) {
+  .about-content {
+    grid-template-columns: 3fr 2fr;
+    gap: 1.5rem;
+  }
+
+  .about-content h1 {
+    grid-column: 1 / -1;
+  }
+
+  .about-text {
+    grid-column: 1;
+  }
+
+  .about-image {
+    grid-column: 2;
+    align-self: start;
+    position: sticky;
+    top: 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .about-section {
+    padding: 1rem;
+  }
+
+  .about-content h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .about-image {
+    margin-top: 0.25rem;
+  }
+
+  .feature-image {
+    max-height: 200px;
+  }
+}
+</style>
+{% endblock %}

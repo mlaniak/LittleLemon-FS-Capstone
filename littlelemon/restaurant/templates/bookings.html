@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="bookings-section">
+  <div class="bookings-content">
+    <h1>All Bookings</h1>
+    <p class="date-display">{{ current_date }}</p>
+
+    {% if bookings %}
+      {% regroup bookings by reservation_date as bookings_by_date %}
+      {% for date in bookings_by_date %}
+        <div class="date-section">
+          <h2 class="date-heading">{{ date.grouper|date:"l, F j, Y" }}</h2>
+          <div class="bookings-grid">
+            {% for booking in date.list %}
+              <div class="booking-card">
+                <div class="booking-header">
+                  <span class="booking-time">
+                    {% with time=booking.reservation_slot|slice:":2"|add:"0" %}
+                      {% if time|add:"0" >= 12 %}
+                        {% if time|add:"0" > 12 %}
+                          {{ time|add:"-12" }}{{ booking.reservation_slot|slice:"2:" }} PM
+                        {% else %}
+                          {{ booking.reservation_slot }} PM
+                        {% endif %}
+                      {% else %}
+                        {% if time|add:"0" == 0 %}
+                          12{{ booking.reservation_slot|slice:"2:" }} AM
+                        {% else %}
+                          {{ time|add:"0" }}{{ booking.reservation_slot|slice:"2:" }} AM
+                        {% endif %}
+                      {% endif %}
+                    {% endwith %}
+                  </span>
+                  <span class="booking-count">{{ forloop.counter }}/{{ date.list|length }}</span>
+                </div>
+                <div class="booking-details">
+                  <span class="guest-name">{{ booking.first_name }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="no-bookings">
+        <p>No bookings found</p>
+        <a href="{% url 'book' %}" class="book-button">Make a Reservation</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.bookings-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.bookings-content h1 {
+  color: #333;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.date-display {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.date-section {
+  margin-bottom: 3rem;
+}
+
+.date-section:last-child {
+  margin-bottom: 0;
+}
+
+.date-heading {
+  color: #495E57;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #495E57;
+}
+
+.bookings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.booking-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.booking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.booking-header {
+  background: #495E57;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.booking-time {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.booking-count {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  background: rgba(255,255,255,0.2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+}
+
+.booking-details {
+  padding: 1rem;
+}
+
+.guest-name {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.no-bookings {
+  text-align: center;
+  padding: 3rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.no-bookings p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.book-button {
+  display: inline-block;
+  background-color: #495E57;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.book-button:hover {
+  background-color: #374641;
+}
+
+@media (max-width: 768px) {
+  .bookings-section {
+    padding: 1rem;
+  }
+
+  .bookings-content h1 {
+    font-size: 1.75rem;
+  }
+
+  .date-heading {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .bookings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .date-section {
+    margin-bottom: 2rem;
+  }
+}
+</style>
+{% endblock %}

@@ -23,18 +23,23 @@ from rest_framework.authtoken.views import obtain_auth_token
 from restaurant import views
 
 router = DefaultRouter()
-router.register(r'bookings', views.BookingViewSet)
+router.register(r'api/bookings', views.BookingViewSet)
 
 urlpatterns = [
+    # Frontend and API URLs from restaurant app
+    path('', include('restaurant.urls')),
+    
     # Admin interface
     path('admin/', admin.site.urls),
     
-    # API endpoints
-    path('api/', include('restaurant.urls')),
-    path('api/', include(router.urls)),
+    # Router URLs (for bookings)
+    path('', include(router.urls)),
     
     # Authentication endpoints
-    path('api-token-auth/', obtain_auth_token),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+
+# Serve static files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

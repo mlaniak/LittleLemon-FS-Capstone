@@ -4,22 +4,29 @@ from rest_framework.authtoken.views import obtain_auth_token
 from . import views
 
 urlpatterns = [
-    # API root
-    path('', views.api_root),
+    # Frontend URLs
+    path('', views.home, name='home'),
+    path('about/', views.about, name='about'),
+    path('menu/', views.menu_view, name='menu'),
+    path('book/', views.book_view, name='book'),
+    path('bookings/', views.bookings, name='bookings'),
+    path('reservations/', views.reservations, name='reservations'),
     
-    # User endpoints
-    path('users/', views.UserList.as_view(), name='user-list'),
-    path('users/<int:pk>/', views.UserDetail.as_view(), name='user-detail'),
-    
-    # Menu endpoints
-    path('menu/', views.MenuItemsView.as_view(), name='menu-list'),
-    path('menu/<int:pk>/', views.SingleMenuItemView.as_view(), name='menu-detail'),
-    path('menu-items/', views.MenuItemsView.as_view(), name='menu-items-list'),
-    path('menu-items/<int:pk>/', views.SingleMenuItemView.as_view(), name='menu-items-detail'),
-    
-    # Authentication endpoints
-    path('message/', views.msg, name='protected-message'),
-    path('api-token-auth/', obtain_auth_token, name='api-token-auth'),
+    # API endpoints
+    path('api/', views.api_root),
+    path('api/users/', views.UserList.as_view(), name='user-list'),
+    path('api/users/<int:pk>/', views.UserDetail.as_view(), name='user-detail'),
+    path('api/menu/', views.MenuItemsView.as_view(), name='menu-list'),
+    path('api/menu/<int:pk>/', views.SingleMenuItemView.as_view(), name='menu-detail'),
+    path('api/menu-items/', views.MenuItemsView.as_view(), name='menu-items-list'),
+    path('api/menu-items/<int:pk>/', views.SingleMenuItemView.as_view(), name='menu-item-detail'),
+    path('api/bookings/', views.BookingViewSet.as_view({'get': 'list', 'post': 'create'}), name='booking-list'),
+    path('api/bookings/<int:pk>/', views.BookingViewSet.as_view({
+        'get': 'retrieve',
+        'put': 'update',
+        'patch': 'partial_update',
+        'delete': 'destroy'
+    }), name='booking-detail'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -1,0 +1,93 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Little Lemon - {% block title %}Welcome{% endblock %}</title>
+    <meta name="description" content="Based in Chicago, Illinois, Little Lemon is a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist." />
+    <meta name="author" content="Little Lemon Restaurant" />
+
+    <!-- Load favicon -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}" />
+
+    <!-- Include CSS files -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Markazi+Text:wght@400;500;700&display=swap" rel="stylesheet" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="header-content">
+        <div class="logo">
+          <a href="{% url 'home' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Little Lemon Logo" />
+          </a>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+            <li><a href="{% url 'about' %}" class="{% if request.path == '/about/' %}active{% endif %}">About</a></li>
+            <li><a href="{% url 'menu' %}" class="{% if request.path == '/menu/' %}active{% endif %}">Menu</a></li>
+            <li><a href="{% url 'book' %}" class="{% if request.path == '/book/' %}active{% endif %}">Book</a></li>
+            <li><a href="{% url 'bookings' %}" class="{% if request.path == '/bookings/' %}active{% endif %}">Bookings</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      {% block content %}
+      {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <img src="{% static 'img/logo_footer.png' %}" alt="Little Lemon Footer Logo" />
+          <p>Experience the taste of Mediterranean cuisine at its finest.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Navigation</h3>
+          <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'menu' %}">Menu</a></li>
+            <li><a href="{% url 'book' %}">Book</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <ul>
+            <li><i class="fas fa-map-marker-alt"></i> Chicago, Illinois</li>
+            <li><i class="fas fa-phone"></i> (555) 123-4567</li>
+            <li><i class="fas fa-envelope"></i> info@littlelemon.com</li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Social Media</h3>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; {% now "Y" %} Little Lemon Restaurant. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
